@@ -3,6 +3,11 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 
+from django.views.generic.base import TemplateResponseMixin
+from django.views import View
+
+
+
 from .models import Course
 
 
@@ -45,3 +50,11 @@ class CourseDeleteView(OwnerCourseMixin, DeleteView):
 
 class CourseCreateView(OwnerEditCourseMixin, CreateView):
     permission_required = 'courses.change_course'
+
+
+class ModuleCourseView(TemplateResponseMixin, View):
+    def dispatch(self, request, course_id):
+        self.course = get_object_or_404(Course,
+                                        id=course_id,
+                                        owner=request.user)
+        return super().dispatch(request, course_id)

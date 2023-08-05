@@ -21,4 +21,12 @@ urlpatterns = [
          name='module_content_update'),
     path('module/content/delete/<id>/', views.ContentDeleteView.as_view(),
          name='content_delete'),
+    path('module/content/<int:module_id>/', views.ModuleContentListView.as_view(),
+         name='content_list'),
+    path('module/order/', views.ModuleOrderEdit.as_view(),
+         name='module_order'),
+    path('content/order/', views.ContentOrderEdit.as_view(),
+         name='content_order'),
+    path('subject/<slug:subject>/', views.CourseListView.as_view(),
+         name='course_list_subject'),
 ]

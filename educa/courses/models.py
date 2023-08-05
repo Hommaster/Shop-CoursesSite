@@ -43,9 +43,6 @@ class Course(models.Model):
 
 
 class Module(models.Model):
-    owner = models.ForeignKey(User,
-                              on_delete=models.CASCADE,
-                              related_name='module_owner')
     course = models.ForeignKey(Course,
                                on_delete=models.CASCADE,
                                related_name='modules')

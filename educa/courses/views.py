@@ -1,4 +1,6 @@
+from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.forms import modelform_factory
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
@@ -10,7 +12,7 @@ from .forms import ModuleFormset
 
 
 
-from .models import Course
+from .models import Course, Module, Content
 
 
 class OwnerMixin:
@@ -87,3 +89,78 @@ class ModuleCourseUpdateView(TemplateResponseMixin, View):
                 'course': self.course
             }
         )
+
+
+class ContentCreateUpdateView(TemplateResponseMixin, View):
+    module = None
+    model = None
+    obj = None
+    template_name = 'courses/manage/contents/form.html'
+
+    def get_model(self, model_name):
+        if model_name in ['text', 'image', 'file', 'video']:
+            return apps.get_model(app_label='course',
+                                  model_name=model_name)
+
+    def get_formset(self, model, *args, **kwargs):
+        form = modelform_factory(model,
+                                 exclude=[
+                                     'owner',
+                                     'created',
+                                     'updated',
+                                     'order',
+                                 ])
+        return form(*args, **kwargs)
+
+    def dispatch(self, request, module_id, model_name, id=None):
+        self.module = get_object_or_404(Module,
+                                        id=module_id,
+                                        course__owner=request.user)
+        self.model = self.get_model(model_name)
+        if id:
+            self.obj = get_object_or_404(self.model,
+                                         id=id,
+                                         owner=request.user)
+        return super().dispatch(request, module_id, model_name, id)
+
+    def get(self, request, module_id, model_name, id=None):
+        form = self.get_formset(self.model,
+                                instance=self.obj)
+        return self.render_to_response(
+            {
+                'form': form,
+                'obj': self.obj
+            }
+        )
+
+    def post(self, request, module_id, model_name, id=None):
+        form = self.get_formset(self.model,
+                                instance=self.obj,
+                                data=request.POST,
+                                files=request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.owner = request.user
+            obj.save()
+            if not id:
+                Content.objects.create(module=self.module,
+                                       item=obj)
+            return redirect('module_content_lis', self.module.id)
+        return self.render_to_response(
+            {
+                'form': form,
+                'obj': self.obj
+            }
+        )
+
+
+class ContentDeleteView(View):
+
+    def post(self, request, id):
+        content = get_object_or_404(Content,
+                                    id=id,
+                                    module__course__owner=request.user)
+        module = content.module
+        content.items.delete()
+        content.delete()
+        return redirect('module_content_list', module.id)

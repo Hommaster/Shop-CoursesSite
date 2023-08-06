@@ -25,7 +25,7 @@ class Course(models.Model):
                                 on_delete=models.CASCADE,
                                 related_name='courses')
     owner = models.ForeignKey(User,
-                              on_delete=True,
+                              on_delete=models.CASCADE,
                               related_name='course_owner')
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
@@ -43,9 +43,6 @@ class Course(models.Model):
 
 
 class Module(models.Model):
-    owner = models.ForeignKey(User,
-                              on_delete=models.CASCADE,
-                              related_name='module_owner')
     course = models.ForeignKey(Course,
                                on_delete=models.CASCADE,
                                related_name='modules')
@@ -66,6 +63,7 @@ class Content(models.Model):
                                related_name='contents',
                                on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType,
+                                     on_delete=models.CASCADE,
                                      limit_choices_to={
                                          'model__in': (
                                              'text',

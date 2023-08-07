@@ -15,12 +15,12 @@ def registrate(request,):
             new_user.save()
             Profile.objects.create(user=new_user)
             return render(request,
-                          'accounts/registrate_done.html',
+                          'account/registrate_done.html',
                           {'new_user': new_user})
     else:
         user_form = RegistrationForm()
         return render(request,
-                      'accounts/registrate.html',
+                      'account/registrate.html',
                       {'user_form': user_form}
                       )
 
@@ -41,7 +41,7 @@ def edit(request):
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(request, 'accounts/edit.html',
+    return render(request, 'account/edit.html',
                   {
                       'user_form': user_form,
                       'profile_form': profile_form,

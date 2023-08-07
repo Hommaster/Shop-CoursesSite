@@ -20,7 +20,7 @@ from students.forms import EnrollStudentForm
 class OwnerMixin:
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(owmer=self.request.user)
+        return qs.filter(owner=self.request.user)
 
 
 class OwnerEditMixin:
@@ -32,7 +32,7 @@ class OwnerEditMixin:
 class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin,
                        PermissionRequiredMixin):
     model = Course
-    fields = ['title', 'subject', 'description']
+    fields = ['title', 'slug', 'subject', 'description']
     success_url = reverse_lazy('manage_course_list')
 
 
@@ -60,7 +60,7 @@ class CourseCreateView(OwnerEditCourseMixin, CreateView):
 
 class ModuleCourseUpdateView(TemplateResponseMixin, View):
     course = None
-    template_name = 'courses/manage/module/'
+    template_name = 'courses/manage/module/formset.html'
 
     def dispatch(self, request, pk):
         self.course = get_object_or_404(Course,
@@ -84,7 +84,7 @@ class ModuleCourseUpdateView(TemplateResponseMixin, View):
         formset = self.get_formset(request.POST)
         if formset.is_valid():
             formset.save()
-            return redirect('')
+            return redirect('manage_course_list')
         return self.render_to_response(
             {
                 'formset': formset,

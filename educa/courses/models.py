@@ -38,6 +38,12 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        super(Course, self).save()
+        if not self.slug:
+            self.slug = self.title + '-' + str(self.pk)
+            super(Course, self).save(*args, **kwargs)
+
     class Meta:
         ordering = ['-created']
 

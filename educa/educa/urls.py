@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('course/', include('courses.urls')),
     path('student/', include('students.urls')),
+    path('account/', include('accounts.urls')),
+    path('social-auth/', include('social_django.urls', namespace='social-auth')),
 ]

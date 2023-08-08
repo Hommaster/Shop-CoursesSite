@@ -130,7 +130,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'manage_course_list'
+LOGIN_REDIRECT_URL = 'course_list'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 

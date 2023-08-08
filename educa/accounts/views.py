@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib import messages
+from django.views.generic import DetailView
 
 from .forms import RegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
@@ -46,3 +47,12 @@ def edit(request):
                       'user_form': user_form,
                       'profile_form': profile_form,
                   })
+
+
+# class ProfileView(DetailView):
+#     model = Profile
+#     template_name = 'account/profile.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         return context

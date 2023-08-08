@@ -15,6 +15,7 @@ from .models import Course, Module, Content, Subject
 from braces.views import CsrfExemptMixin, JSONResponseMixin
 
 from students.forms import EnrollStudentForm
+from accounts.models import Profile
 
 
 class OwnerMixin:
@@ -228,14 +229,26 @@ class CourseListView(TemplateResponseMixin, View):
 class CourseDetailView(DetailView):
     template_name = 'courses/course/detail.html'
     model = Course
+    course = None
+    trying = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['enroll_form'] = EnrollStudentForm(
-            initial={
-                'course': self.object,
-                'profile': self.request.user,
-            }
-        )
+        self.course = self.object
+        try:
+            Profile.objects.filter(course=self.object).get(user=self.request.user)
+            self.trying = True
+        except Profile.DoesNotExist:
+            self.trying = False
+        if self.trying is False:
+            context['enroll_form'] = EnrollStudentForm(
+                initial={
+                    'course': self.object,
+                    'profile': self.request.user,
+                }
+            )
+            context['enroll'] = True
+        else:
+            context['enroll'] = False
         return context
 

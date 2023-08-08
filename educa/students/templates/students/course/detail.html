@@ -24,10 +24,15 @@
             {% endfor %}
         </ul>
         <h3>
-            <a href="{% url "chat:course_chat_room" object.id%}">
+            <a href="#" object.id>
                 Course chat room
             </a>
         </h3>
+        <form action="{% url "student_unenroll_course" %}" method="post">
+          {{ enroll_form }}
+          {% csrf_token %}
+          <input type="submit" value="Unenroll now">
+        </form>
     </div>
     <div class="module">
         {% for content in module.contents.all %}

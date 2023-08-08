@@ -231,9 +231,11 @@ class CourseDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['enroll_course'] = EnrollStudentForm(
+        context['enroll_form'] = EnrollStudentForm(
             initial={
-                'course': self.object
+                'course': self.object,
+                'profile': self.request.user,
             }
         )
         return context
+

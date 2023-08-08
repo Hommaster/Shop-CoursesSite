@@ -7,17 +7,16 @@
 </head>
 <body>
   <div id="header">
-    <span class="logo">SCS</span>
+    <a href="{% url 'course_list' %}" class="logo">SCS</a>
     {% if request.user.is_authenticated %}
       <ul class="menu">
         </li>
-        <li {% if section == "images" %}class="selected"{% endif %}>
-          <a href="#">Images</a>
+        <li {% if section == "courses" %}class="selected"{% endif %}>
+          <a href="{% url 'course_list' %}">Courses</a>
         </li>
-        <li {% if section == "people" %}class="selected"{% endif %}>
-          <a href="#">People</a>
+        <li {% if section == "my courses" %}class="selected"{% endif %}>
+          <a href="{% url 'student_course_list' %}">My courses</a>
         </li>
-      </ul>
     {% endif %}
     <span class="user">
       {% if request.user.is_authenticated %}

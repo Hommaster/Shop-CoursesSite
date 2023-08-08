@@ -3,6 +3,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.text import slugify
 
 from .orders import OrderItem
 
@@ -41,7 +42,7 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
         super(Course, self).save()
         if not self.slug:
-            self.slug = self.title + '-' + str(self.pk)
+            self.slug = slugify(self.title) + '-' + str(self.pk)
             super(Course, self).save(*args, **kwargs)
 
     class Meta:

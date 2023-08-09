@@ -15,12 +15,13 @@ from .models import Course, Module, Content, Subject
 from braces.views import CsrfExemptMixin, JSONResponseMixin
 
 from students.forms import EnrollStudentForm
+from accounts.models import Profile
 
 
 class OwnerMixin:
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(owmer=self.request.user)
+        return qs.filter(owner=self.request.user)
 
 
 class OwnerEditMixin:
@@ -60,7 +61,7 @@ class CourseCreateView(OwnerEditCourseMixin, CreateView):
 
 class ModuleCourseUpdateView(TemplateResponseMixin, View):
     course = None
-    template_name = 'courses/manage/module/'
+    template_name = 'courses/manage/module/formset.html'
 
     def dispatch(self, request, pk):
         self.course = get_object_or_404(Course,
@@ -84,7 +85,7 @@ class ModuleCourseUpdateView(TemplateResponseMixin, View):
         formset = self.get_formset(request.POST)
         if formset.is_valid():
             formset.save()
-            return redirect('')
+            return redirect('manage_course_list')
         return self.render_to_response(
             {
                 'formset': formset,
@@ -228,12 +229,28 @@ class CourseListView(TemplateResponseMixin, View):
 class CourseDetailView(DetailView):
     template_name = 'courses/course/detail.html'
     model = Course
+    course = None
+    trying = None
+    user = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['enroll_course'] = EnrollStudentForm(
-            initial={
-                'course': self.object
-            }
-        )
+        self.course = self.object
+        self.user = self.request.user
+        try:
+            Profile.objects.filter(course=self.object).get(user=self.request.user)
+            self.trying = True
+        except Profile.DoesNotExist:
+            self.trying = False
+        if self.trying is False:
+            context['enroll_form'] = EnrollStudentForm(
+                initial={
+                    'course': self.object,
+                    'pr': self.user
+                }
+            )
+            context['enroll'] = True
+        else:
+            context['enroll'] = False
         return context
+

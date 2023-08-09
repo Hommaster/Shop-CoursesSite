@@ -19,6 +19,7 @@
       </p>
       {{ object.overview|linebreaks }}
       {% if request.user.is_authenticated %}
+      {{ profile }}
         {% if enroll %}
           <form action="{% url "student_enroll_course" %}" method="post">
             {{ enroll_form }}

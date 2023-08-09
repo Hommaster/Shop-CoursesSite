@@ -231,10 +231,12 @@ class CourseDetailView(DetailView):
     model = Course
     course = None
     trying = None
+    user = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.course = self.object
+        self.user = self.request.user
         try:
             Profile.objects.filter(course=self.object).get(user=self.request.user)
             self.trying = True
@@ -244,7 +246,7 @@ class CourseDetailView(DetailView):
             context['enroll_form'] = EnrollStudentForm(
                 initial={
                     'course': self.object,
-                    'profile': self.request.user,
+                    'pr': self.user
                 }
             )
             context['enroll'] = True

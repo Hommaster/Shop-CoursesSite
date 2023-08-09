@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ object.user.first_name }}
+{% endblock %}
+
+{% block content %}
+    {% for c in courses %}
+        {{ c.title }}
+    {% endfor %}
+{% endblock %}

@@ -6,6 +6,8 @@ from django.views.generic import DetailView
 from .forms import RegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
 
+from courses.models import Course
+
 
 def registrate(request,):
     if request.method == 'POST':
@@ -49,10 +51,12 @@ def edit(request):
                   })
 
 
-# class ProfileView(DetailView):
-#     model = Profile
-#     template_name = 'account/profile.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         return context
+class ProfileView(DetailView):
+    model = Profile
+    template_name = 'account/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        courses = Course.objects.filter(title=self.object.course)
+        context['courses'] = courses
+        return context

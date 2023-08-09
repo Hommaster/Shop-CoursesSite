@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'educa.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_scs',
+        'NAME': 'db_scs2',
         'USER': 'educa_user',
         'PASSWORD': '31012002sesiD',
         'HOST': 'localhost',
@@ -130,7 +130,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'course_list'
+
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 

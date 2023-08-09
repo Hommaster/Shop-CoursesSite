@@ -64,12 +64,14 @@ class StudentRegistration(CreateView):
 class StudentEnrollView(LoginRequiredMixin, FormView):
     form_class = EnrollStudentForm
     course = None
+    user = None
     profile = None
 
     def form_valid(self, form):
         self.course = form.cleaned_data['course']
         self.course.students.add(self.request.user)
-        self.profile = form.cleaned_data['profile']
+        self.user = form.cleaned_data['pr']
+        self.profile = Profile.objects.get(user=self.user)
         self.profile.course.add(self.course)
         return super().form_valid(form)
 

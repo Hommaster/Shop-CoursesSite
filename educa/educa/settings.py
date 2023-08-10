@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'courses.apps.CoursesConfig',
     'students.apps.StudentsConfig',
+    'main.apps.MainConfig',
     'social_django',
 ]
 
@@ -130,7 +131,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 

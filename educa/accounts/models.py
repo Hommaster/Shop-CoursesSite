@@ -12,7 +12,7 @@ class Profile(models.Model):
     course = models.ManyToManyField(Course,
                                     related_name='courses',
                                     blank=True)
-    slug = models.CharField(blank=True)
+    slug = models.SlugField()
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='photo/%Y/%m/%d', blank=True)
 

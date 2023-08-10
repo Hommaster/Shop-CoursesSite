@@ -5,7 +5,17 @@
 {% endblock %}
 
 {% block content %}
-    {% for c in courses %}
-        {{ c.title }}
-    {% endfor %}
+    You enroll in this courses:
+        {% for course in courses %}
+            <p>
+                <a href="{% url 'course_detail' course.slug%}">{{ course.title }}</a>
+                <p>
+                    descpition of course: {{ course.description }}
+                </p>
+            </p>
+        {% endfor %}
+    Edit your profile details:
+    <p>
+        <a href="{% url 'edit' %}">Edit</a>
+    </p>
 {% endblock %}

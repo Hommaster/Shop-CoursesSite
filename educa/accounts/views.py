@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib import messages
@@ -9,7 +10,7 @@ from .models import Profile
 from courses.models import Course
 
 
-def registrate(request,):
+def registrate(request):
     if request.method == 'POST':
         user_form = RegistrationForm(request.POST)
         if user_form.is_valid():
@@ -17,9 +18,15 @@ def registrate(request,):
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
             Profile.objects.create(user=new_user)
+            login(request, new_user)
             return render(request,
                           'account/registrate_done.html',
                           {'new_user': new_user})
+        else:
+            return render(request,
+                          'account/registrate.html',
+                          {'user_form': user_form}
+                          )
     else:
         user_form = RegistrationForm()
         return render(request,
@@ -57,6 +64,6 @@ class ProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        courses = Course.objects.filter(title=self.object.course)
+        courses = Course.objects.filter(students=self.request.user)
         context['courses'] = courses
         return context

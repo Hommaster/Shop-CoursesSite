@@ -71,4 +71,8 @@ class ProfileView(DetailView):
             total_courses=Count('course')
         )
         context['count_course'] = count
+        if self.request.user.has_perm('courses.add_course'):
+            context['perm'] = True
+        else:
+            context['perm'] = False
         return context

@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ object.title }}{% endblock %}
+{% block title %}{{ object.title }} {{ perm }}{% endblock %}
 
 {% block content %}
+    {{ perm }}
+    {% if perm %}
+        pp
+    {% endif %}
     <h1>
         {{ module.title }}
     </h1>

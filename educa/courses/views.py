@@ -35,6 +35,7 @@ class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin,
     model = Course
     fields = ['title', 'subject', 'description']
     success_url = reverse_lazy('manage_course_list')
+    permission_required = ''
 
 
 class OwnerEditCourseMixin(OwnerCourseMixin, OwnerEditMixin):
@@ -56,7 +57,7 @@ class CourseDeleteView(OwnerCourseMixin, DeleteView):
 
 
 class CourseCreateView(OwnerEditCourseMixin, CreateView):
-    permission_required = 'courses.change_course'
+    permission_required = 'courses.add_course'
 
 
 class ModuleCourseUpdateView(TemplateResponseMixin, View):
@@ -98,11 +99,11 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
     module = None
     model = None
     obj = None
-    template_name = 'courses/manage/contents/form.html'
+    template_name = 'courses/manage/content/form.html'
 
     def get_model(self, model_name):
         if model_name in ['text', 'image', 'file', 'video']:
-            return apps.get_model(app_label='course',
+            return apps.get_model(app_label='courses',
                                   model_name=model_name)
 
     def get_formset(self, model, *args, **kwargs):
@@ -148,7 +149,7 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
             if not id:
                 Content.objects.create(module=self.module,
                                        item=obj)
-            return redirect('module_content_lis', self.module.id)
+            return redirect('module_content_list', self.module.id)
         return self.render_to_response(
             {
                 'form': form,
@@ -164,7 +165,7 @@ class ContentDeleteView(View):
                                     id=id,
                                     module__course__owner=request.user)
         module = content.module
-        content.items.delete()
+        content.item.delete()
         content.delete()
         return redirect('module_content_list', module.id)
 

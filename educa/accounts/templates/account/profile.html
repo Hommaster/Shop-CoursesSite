@@ -27,4 +27,12 @@ You can choices courses:
         <a href="{% url 'edit' %}">Edit</a>
     </p>
 {% endif %}
+
+{% if perm %}
+<p>
+    You can create course:
+    <a href="{% url 'course_create' %}" class="button">Create course!</a>
+</p>
+{% endif %}
+
 {% endblock %}

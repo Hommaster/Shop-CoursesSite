@@ -1,5 +1,6 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.shortcuts import render
 from django.contrib import messages
 from django.views.generic import DetailView
@@ -18,7 +19,7 @@ def registrate(request):
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
             Profile.objects.create(user=new_user)
-            login(request, new_user)
+            login(request, new_user, backend='django.contrib.auth.backends.ModelBackend')
             return render(request,
                           'account/registrate_done.html',
                           {'new_user': new_user})
@@ -66,4 +67,8 @@ class ProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         courses = Course.objects.filter(students=self.request.user)
         context['courses'] = courses
+        count = Profile.objects.annotate(
+            total_courses=Count('course')
+        )
+        context['count_course'] = count
         return context

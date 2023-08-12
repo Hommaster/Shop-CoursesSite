@@ -212,7 +212,8 @@ class CourseListView(TemplateResponseMixin, View):
             total_courses=Count('courses')
         )
         courses = Course.objects.annotate(
-            total_module=Count('modules')
+            total_module=Count('modules'),
+            total_students=Count('students_course')
         )
         if subject:
             subject = get_object_or_404(Subject, slug=subject)
@@ -221,7 +222,7 @@ class CourseListView(TemplateResponseMixin, View):
             {
                 'subjects': subjects,
                 'subject': subject,
-                'courses': courses
+                'courses': courses,
             }
         )
 
@@ -238,15 +239,21 @@ class CourseDetailView(DetailView):
         self.course = self.object
         self.user = self.request.user
         try:
-            Profile.objects.filter(course=self.object).get(user=self.request.user)
-            self.trying = True
-        except Profile.DoesNotExist:
-            self.trying = False
+            Profile.objects.get(user=self.request.user)
+            context['reg'] = True
+            try:
+                Profile.objects.filter(course=self.object).get(user=self.request.user)
+                context['profile_have_this_course'] = True
+            except Profile.DoesNotExist:
+                context['profile_have_this_course'] = False
+                self.trying = False
+        except TypeError:
+            context['reg'] = False
         if self.trying is False:
             context['enroll_form'] = EnrollStudentForm(
                 initial={
                     'course': self.object,
-                    'pr': self.user
+                    'user': self.user
                 }
             )
             context['enroll'] = True

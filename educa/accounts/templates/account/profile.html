@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block content %}
+{{ count_course.total_courses }}
+{% if courses is None %}
+You don't enroll any course.
+You can choices courses:
+<p>
+    <a href="{% url 'course_list' %}">Course list</a>
+</p>
+{% else %}
     You enroll in this courses:
         {% for course in courses %}
             <p>
@@ -18,4 +26,5 @@
     <p>
         <a href="{% url 'edit' %}">Edit</a>
     </p>
+{% endif %}
 {% endblock %}

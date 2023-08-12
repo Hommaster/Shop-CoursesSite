@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block content %}
+{% if reg == True %}
+
   {% with subject=object.subject %}
     <h1>
       {{ object.title }}
@@ -15,6 +17,7 @@
         <a href="{% url "course_list_subject" subject.slug %}">
         {{ subject.title }}</a>.
         {{ object.modules.count }} modules.
+        {{ object.students.count }} students.
         Instructor: {{ object.owner.get_full_name }}
       </p>
       {{ object.overview|linebreaks }}
@@ -38,4 +41,12 @@
       {% endif %}
     </div>
   {% endwith %}
+{% else %}
+<p>
+    If you have account: <a href="{% url 'login' %}" class="button">Login</a>
+</p>
+<p>
+    If you don't have an account: <a href="{% url 'registrate' %}" class="button">Register</a>
+</p>
+{% endif %}
 {% endblock %}

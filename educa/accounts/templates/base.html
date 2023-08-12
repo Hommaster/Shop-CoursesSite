@@ -10,6 +10,9 @@
     <a href="{% url 'course_list' %}" class="logo">SCS</a>
     {% if request.user.is_authenticated %}
       <ul class="menu">
+        {% if request.user.has_perm %}
+          pp
+        {% endif %}
         </li>
         <li {% if section == "courses" %}class="selected"{% endif %}>
           <a href="{% url 'course_list' %}">Courses</a>

@@ -40,7 +40,7 @@ class StudentCourseDetailView(LoginRequiredMixin,
         context['enroll_form'] = EnrollStudentForm(
             initial={
                 'course': course,
-                'profile': self.request.user
+                'user': self.request.user
             }
         )
         return context
@@ -70,7 +70,7 @@ class StudentEnrollView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         self.course = form.cleaned_data['course']
         self.course.students.add(self.request.user)
-        self.user = form.cleaned_data['pr']
+        self.user = form.cleaned_data['user']
         self.profile = Profile.objects.get(user=self.user)
         self.profile.course.add(self.course)
         return super().form_valid(form)
@@ -84,11 +84,13 @@ class StudentUnenrollView(LoginRequiredMixin, FormView):
     form_class = EnrollStudentForm
     course = None
     profile = None
+    user = None
 
     def form_valid(self, form):
         self.course = form.cleaned_data['course']
-        self.profile = form.cleaned_data['profile']
         self.course.students.remove(self.request.user)
+        self.user = form.cleaned_data['user']
+        self.profile = Profile.objects.get(user=self.user)
         self.profile.course.remove(self.course)
         return super().form_valid(form)
 

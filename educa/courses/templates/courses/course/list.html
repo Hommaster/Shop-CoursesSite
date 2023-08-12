@@ -43,8 +43,9 @@
         </h3>
         <p>
           <a href="{% url "course_list_subject" subject.slug %}">{{ subject }}</a>.
-            {{ course.total_modules }} modules.
-            Instructor: {{ course.owner.get_full_name }}
+            {{ course.total_module }} modules.
+            {{ course.total_students }} students.
+            Instructor: {{ course.owner.username }}
         </p>
       {% endwith %}
     {% endfor %}

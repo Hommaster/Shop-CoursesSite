@@ -32,4 +32,6 @@ urlpatterns = [
          name='course_list_subject'),
     path('<slug:slug>/', views.CourseDetailView.as_view(),
          name='course_detail'),
+    path('mine/update/<slug:slug>/', views.MineCourseUpdateView.as_view(),
+         name='mine_course_change'),
 ]

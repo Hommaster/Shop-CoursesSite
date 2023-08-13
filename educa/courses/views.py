@@ -2,14 +2,14 @@ from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count
 from django.forms import modelform_factory
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView, DetailView
 
 from django.views.generic.base import TemplateResponseMixin
 from django.views import View
 
-from .forms import ModuleFormset
+from .forms import ModuleFormset, CourseForm
 from .models import Course, Module, Content, Subject
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin
@@ -49,6 +49,66 @@ class ManageCourseListView(OwnerCourseMixin, ListView):
 
 class CourseUpdateView(OwnerEditCourseMixin, UpdateView):
     permission_required = 'courses.change_course'
+
+
+class MineCourseUpdateView(TemplateResponseMixin, View):
+    template_name = 'courses/manage/course/update.html'
+    course = None
+    model = None
+    obj = None
+
+    def get_form(self, model, *args, **kwargs):
+        form = modelform_factory(model=model,
+                                 fields=[
+                                     'title',
+                                     'description'
+                                 ])
+        return form(*args, **kwargs)
+
+    def dispatch(self, request, slug):
+        try:
+            self.course = get_object_or_404(
+                Course,
+                slug=slug,
+                owner=self.request.user
+            )
+            self.obj = get_object_or_404(Course,
+                                         slug=slug,
+                                         owner=request.user)
+            return super().dispatch(request, slug)
+        except TypeError:
+            self.course = None
+            return self.course
+        except Course.DoesNotExist:
+            self.course = None
+            return self.course
+
+    def get(self, request, slug):
+        if self.course:
+            form = self.get_form(Course,
+                                 instance=self.obj)
+            return self.render_to_response(
+                {
+                    'course': self.course,
+                    'form': form
+                }
+            )
+        else:
+            return redirect('home')
+
+    def post(self, request, slug):
+        form = self.get_form(Course,
+                             instance=self.course,
+                             data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('course_detail', self.course.slug)
+        return self.render_to_response(
+            {
+                'course': self.course,
+                'form': form,
+            }
+        )
 
 
 class CourseDeleteView(OwnerCourseMixin, DeleteView):

@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     'students.apps.StudentsConfig',
     'main.apps.MainConfig',
     'social_django',
+    'chat',
+    'channels',
 ]
 
 MIDDLEWARE = [

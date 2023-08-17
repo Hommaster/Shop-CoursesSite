@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
 
 {% block title %}{{ object.title }} {{ perm }}{% endblock %}
 
@@ -22,13 +22,16 @@
                         <br>
                         {{ m.title }}
                     </a>
+                    <a href="{% url 'chat:module_chat_room' m.id %}">
+                        Module chat room
+                    </a>
                 </li>
             {% empty %}
                 <li>No modules yet.</li>
             {% endfor %}
         </ul>
         <h3>
-            <a href="{% url "chat:course_chat_room" object.id%}">
+            <a href="{% url 'chat:course_chat_room' object.id%}">
                 Course chat room
             </a>
         </h3>

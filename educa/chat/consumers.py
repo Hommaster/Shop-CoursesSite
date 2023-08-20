@@ -77,3 +77,38 @@ class ModuleChatConsumer(AsyncWebsocketConsumer):
     async def chat_send(self, event):
         await self.send(text_data=json.dumps(event))
 
+
+class UserConsumer(AsyncWebsocketConsumer):
+
+    async def connect(self):
+        self.slug = self.scope['url_route']['kwargs']['slug']
+        self.user = self.scope['user']
+        self.users_chat_room = f'chat_{self.slug}'
+        await self.channel_layer.group_add(
+            self.users_chat_room,
+            self.channel_name
+        )
+        await self.accept()
+
+    async def disconnect(self, code_code):
+        self.channel_layer.group_discard(
+            self.users_chat_room,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        now = timezone.now()
+        await self.channel_layer.group_send(
+            self.users_chat_room,
+            {
+                'type': 'chat_send',
+                'user': self.user.username,
+                'message': message,
+                'datetime': now.isoformat(),
+            }
+        )
+
+    async def chat_send(self, event):
+        await self.send(text_data=json.loads(event))

@@ -1,6 +1,6 @@
 {% extends "base1.html" %}
 
-{% block title %}Chat room for "{{ module.title }}"{% endblock %}
+{% block title %}Chat room for "{{ user.user.username }}"{% endblock %}
 
 {% block content %}
   <div id="chat">
@@ -12,19 +12,19 @@
 {% endblock %}
 
 {% block include_js %}
-  {{ module.id|json_script:"module-id" }}
+  {{ user.slug|json_script:"slug" }}
   {{ request.user.username|json_script:"request-user" }}
 {% endblock %}
 
 {% block domready %}
-  const moduleId = JSON.parse(
-    document.getElementById('module-id').textContent
+  const userSlug = JSON.parse(
+    document.getElementById('slug').textContent
   );
   const requestUser = JSON.parse(
     document.getElementById('request-user').textContent
   );
   const url = 'ws://' + window.location.host +
-              '/ws/chat/room/module/' + moduleId + '/';
+              '/ws/chat/room/user/' + userSlug + '/';
   const chatSocket = new WebSocket(url);
 
   chatSocket.onmessage = function(event) {

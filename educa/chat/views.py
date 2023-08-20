@@ -3,6 +3,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 
 from courses.models import Module
+from accounts.models import Profile
 
 
 @login_required
@@ -26,5 +27,20 @@ def module_chat_room(request, module_id):
         request, 'chat/module_room.html',
         {
             'module': module,
+        }
+    )
+
+
+@login_required
+def users_chat(request, slug):
+    try:
+        user = get_object_or_404(Profile,
+                                 slug=slug)
+    except:
+        return HttpResponseForbidden
+    return render(
+        request, 'chat/user_room.html',
+        {
+            'user': user,
         }
     )

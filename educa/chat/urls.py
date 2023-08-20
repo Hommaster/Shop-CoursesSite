@@ -7,5 +7,7 @@ urlpatterns = [
     path('room/<int:course_id>/', views.course_chat_room,
          name='course_chat_room'),
     path('room/module/<int:module_id>/',
-         views.module_chat_room, name='module_chat_room')
+         views.module_chat_room, name='module_chat_room'),
+    path('room/user/<slug:slug>/',
+         views.users_chat, name='user_chat_room'),
 ]

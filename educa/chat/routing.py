@@ -7,6 +7,6 @@ websocket_urlpatterns = [
             consumers.ChatConsumer.as_asgi()),
     re_path(r'ws/chat/room/module/(?P<module_id>\d+)/$',
             consumers.ModuleChatConsumer.as_asgi()),
-    re_path(r'ws/chat/room/user/(?P<slug>\d+)/$',
+    re_path(r'ws/chat/room/user/(?P<user_slug>[^/]+)/$',
             consumers.UserConsumer.as_asgi()),
 ]

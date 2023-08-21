@@ -12,25 +12,24 @@
 {% endblock %}
 
 {% block include_js %}
-  {{ user.slug|json_script:"slug" }}
+  {{ user.slug|json_script:"user-slug" }}
   {{ request.user.username|json_script:"request-user" }}
 {% endblock %}
 
 {% block domready %}
-  const userSlug = JSON.parse(
-    document.getElementById('slug').textContent
+  const courseId = JSON.parse(
+    document.getElementById('user-slug').textContent
   );
   const requestUser = JSON.parse(
     document.getElementById('request-user').textContent
   );
   const url = 'ws://' + window.location.host +
-              '/ws/chat/room/user/' + userSlug + '/';
+              '/ws/chat/room/user/' + courseId + '/';
   const chatSocket = new WebSocket(url);
 
   chatSocket.onmessage = function(event) {
     const data = JSON.parse(event.data);
     const chat = document.getElementById('chat');
-    document.body.innerHTML = `<h1>${event.data}</h1>
 
     const dateOptions = {hour: 'numeric', minute: 'numeric', hour12: true};
     const datetime = new Date(data.datetime).toLocaleString('en', dateOptions);

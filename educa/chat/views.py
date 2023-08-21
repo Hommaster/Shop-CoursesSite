@@ -32,10 +32,10 @@ def module_chat_room(request, module_id):
 
 
 @login_required
-def users_chat(request, slug):
+def users_chat(request, user_slug):
     try:
         user = get_object_or_404(Profile,
-                                 slug=slug)
+                                 slug=user_slug)
     except:
         return HttpResponseForbidden
     return render(

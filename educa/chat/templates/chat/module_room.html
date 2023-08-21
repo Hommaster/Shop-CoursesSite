@@ -17,20 +17,19 @@
 {% endblock %}
 
 {% block domready %}
-  const moduleId = JSON.parse(
+  const courseId = JSON.parse(
     document.getElementById('module-id').textContent
   );
   const requestUser = JSON.parse(
     document.getElementById('request-user').textContent
   );
   const url = 'ws://' + window.location.host +
-              '/ws/chat/room/module/' + moduleId + '/';
+              '/ws/chat/room/module/' + courseId + '/';
   const chatSocket = new WebSocket(url);
 
   chatSocket.onmessage = function(event) {
     const data = JSON.parse(event.data);
     const chat = document.getElementById('chat');
-    document.body.innerHTML = `<h1>${event.data}</h1>
 
     const dateOptions = {hour: 'numeric', minute: 'numeric', hour12: true};
     const datetime = new Date(data.datetime).toLocaleString('en', dateOptions);

@@ -47,10 +47,10 @@ class ModuleChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.id = self.scope['url_route']['kwargs']['module_id']
-        self.room_group_name = f"chat_module_{self.id}"
+        self.room_group_name = f'chat_{self.id}'
         await self.channel_layer.group_add(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
         await self.accept()
 
@@ -81,9 +81,9 @@ class ModuleChatConsumer(AsyncWebsocketConsumer):
 class UserConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
-        self.slug = self.scope['url_route']['kwargs']['slug']
+        self.id = self.scope['url_route']['kwargs']['user_slug']
         self.user = self.scope['user']
-        self.users_chat_room = f'chat_{self.slug}'
+        self.users_chat_room = f'chat_{self.id}'
         await self.channel_layer.group_add(
             self.users_chat_room,
             self.channel_name
@@ -111,4 +111,4 @@ class UserConsumer(AsyncWebsocketConsumer):
         )
 
     async def chat_send(self, event):
-        await self.send(text_data=json.loads(event))
+        await self.send(text_data=json.dumps(event))

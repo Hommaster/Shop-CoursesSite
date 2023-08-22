@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'courses.apps.CoursesConfig',
     'students.apps.StudentsConfig',
     'main.apps.MainConfig',
+    'pay.apps.PayConfig',
     'social_django',
     'chat',
     'channels',

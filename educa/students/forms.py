@@ -8,4 +8,4 @@ class EnrollStudentForm(forms.Form):
     course = forms.ModelChoiceField(queryset=Course.objects.all(),
                                     widget=forms.HiddenInput)
     user = forms.ModelChoiceField(queryset=User.objects.all(),
-                                widget=forms.HiddenInput)
+                                  widget=forms.HiddenInput)

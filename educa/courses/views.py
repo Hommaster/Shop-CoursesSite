@@ -16,6 +16,7 @@ from braces.views import CsrfExemptMixin, JSONResponseMixin
 
 from students.forms import EnrollStudentForm
 from accounts.models import Profile
+from pay.views import forwarding_pay_course
 
 
 class OwnerMixin:
@@ -61,7 +62,8 @@ class MineCourseUpdateView(TemplateResponseMixin, View):
         form = modelform_factory(model=model,
                                  fields=[
                                      'title',
-                                     'description'
+                                     'description',
+                                     'status',
                                  ])
         return form(*args, **kwargs)
 
@@ -102,7 +104,15 @@ class MineCourseUpdateView(TemplateResponseMixin, View):
                              data=request.POST)
         if form.is_valid():
             form.save()
-            return redirect('course_detail', self.course.slug)
+            cd = form.cleaned_data['status']
+            if cd == self.course.Status.PAY:
+                return forwarding_pay_course(self.course)
+            else:
+                return redirect('course_detail', self.course.slug)
+        else:
+            form = self.get_form(Course,
+                                 instance=self.course,
+                                 data=request.POST)
         return self.render_to_response(
             {
                 'course': self.course,

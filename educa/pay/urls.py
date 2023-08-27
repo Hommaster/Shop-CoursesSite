@@ -2,6 +2,6 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path('create_price/<int:pk>/', views.CreatePricePayCourse.as_view(),
-         name='pay_create_price'),
+    path('forwarding/<slug:course_slug>/', views.forwarding_pay_course,
+         name='forwarding_pay_course'),
 ]

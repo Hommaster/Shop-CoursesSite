@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import PayCourse
 
-# Register your models here.
+
+@admin.register(PayCourse)
+class PayCourseAdmin(admin.ModelAdmin):
+    list_display = ['course', 'price']

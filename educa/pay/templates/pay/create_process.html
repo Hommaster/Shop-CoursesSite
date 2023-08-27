@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base1.html' %}
 
-</body>
-</html>
+{% block title %}
+    Create price for course {{ course.title }}
+{% endblock %}
+
+{% block content %}
+    <h1>
+        Create price for course {{ course.title }}
+    </h1>
+    <div class="module">
+        <p>Enter your details to create price :</p>
+        <form method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Create price for my course {{ course.title }}"></p>
+        </form>
+    </div>
+{% endblock %}

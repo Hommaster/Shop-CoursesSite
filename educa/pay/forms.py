@@ -5,10 +5,8 @@ from courses.models import Course
 from .models import PayCourse
 
 
-class FromCreatePayCourse(forms.ModelForm):
-    class Meta:
-        model = PayCourse
-        fields = ['price']
+class FromCreatePayCourse(forms.Form):
+    price = forms.DecimalField()
 
 
 class FormPayCourse(forms.Form):

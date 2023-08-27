@@ -68,6 +68,11 @@ class ProfileView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         courses = Course.objects.filter(students=self.request.user)
+        try:
+            owner_courses = Course.objects.filter(owner=self.request.user)
+            context['owner_courses'] = owner_courses
+        except:
+            context['owner_courses'] = None
         context['courses'] = courses
         count = Profile.objects.annotate(
             total_courses=Count('course')

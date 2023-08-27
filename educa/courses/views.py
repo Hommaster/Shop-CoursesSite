@@ -16,7 +16,7 @@ from braces.views import CsrfExemptMixin, JSONResponseMixin
 
 from students.forms import EnrollStudentForm
 from accounts.models import Profile
-from pay.views import forwarding_pay_course
+from pay.models import PayCourse
 
 
 class OwnerMixin:
@@ -106,7 +106,7 @@ class MineCourseUpdateView(TemplateResponseMixin, View):
             form.save()
             cd = form.cleaned_data['status']
             if cd == self.course.Status.PAY:
-                return forwarding_pay_course(self.course)
+                return redirect('forwarding_pay_course', self.course.slug)
             else:
                 return redirect('course_detail', self.course.slug)
         else:
@@ -312,23 +312,32 @@ class CourseDetailView(DetailView):
         try:
             Profile.objects.get(user=self.request.user)
             context['reg'] = True
-            try:
-                Profile.objects.filter(course=self.object).get(user=self.request.user)
-                context['profile_have_this_course'] = True
-            except Profile.DoesNotExist:
-                context['profile_have_this_course'] = False
-                self.trying = False
+            if self.course.owner == self.request.user:
+                context['owner'] = True
+            if self.course.Status.PAY:
+                context['pay_course'] = get_object_or_404(PayCourse,
+                                                          course=self.course)
+            else:
+                context['pay_course'] = None
+                try:
+                    Profile.objects.filter(course=self.object).get(user=self.request.user)
+                    context['profile_have_this_course'] = True
+                except Profile.DoesNotExist:
+                    context['profile_have_this_course'] = False
+                    self.trying = False
+                if self.course.Status.FREE:
+                    if self.trying is False:
+                        context['enroll_form'] = EnrollStudentForm(
+                            initial={
+                                'course': self.object,
+                                'user': self.user
+                            }
+                        )
+                        context['enroll'] = True
+                    else:
+                        context['enroll'] = False
         except TypeError:
             context['reg'] = False
-        if self.trying is False:
-            context['enroll_form'] = EnrollStudentForm(
-                initial={
-                    'course': self.object,
-                    'user': self.user
-                }
-            )
-            context['enroll'] = True
-        else:
-            context['enroll'] = False
+
         return context
 

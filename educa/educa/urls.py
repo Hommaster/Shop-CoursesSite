@@ -28,4 +28,5 @@ urlpatterns = [
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('', include('main.urls')),
     path('chat/', include('chat.urls')),
+    path('pay/', include('pay.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

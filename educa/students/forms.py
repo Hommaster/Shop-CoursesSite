@@ -1,11 +1,11 @@
 from django import forms
 
 from courses.models import Course
-from accounts.models import Profile
+from django.contrib.auth.models import User
 
 
 class EnrollStudentForm(forms.Form):
     course = forms.ModelChoiceField(queryset=Course.objects.all(),
                                     widget=forms.HiddenInput)
-    profile = forms.ModelChoiceField(queryset=Profile.objects.all(),
-                                     widget=forms.HiddenInput)
+    user = forms.ModelChoiceField(queryset=User.objects.all(),
+                                  widget=forms.HiddenInput)

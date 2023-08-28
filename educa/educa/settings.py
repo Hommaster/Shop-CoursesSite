@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,7 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'courses.apps.CoursesConfig',
     'students.apps.StudentsConfig',
+    'main.apps.MainConfig',
+    'pay.apps.PayConfig',
+    'payment.apps.PaymentConfig',
     'social_django',
+    'chat',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +86,7 @@ WSGI_APPLICATION = 'educa.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_scs',
+        'NAME': 'db_scs2',
         'USER': 'educa_user',
         'PASSWORD': '31012002sesiD',
         'HOST': 'localhost',
@@ -124,13 +130,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'course_list'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
@@ -179,3 +187,14 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 ]
+
+ASGI_APPLICATION = 'educa.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            'hosts': [('127.0.0.1', 6379)]
+        },
+    },
+}

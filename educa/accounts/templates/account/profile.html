@@ -1,0 +1,55 @@
+{% extends "base_account.html" %}
+
+{% block title %}
+  {{ object.user.first_name }}
+{% endblock %}
+
+{% block content %}
+{% if request.user.username == object.user.username %}
+    {{ count_course.total_courses }}
+    {% if courses is None %}
+    You don't enroll any course.
+    You can choices courses:
+    <p>
+        <a href="{% url 'course_list' %}">Course list</a>
+    </p>
+    {% else %}
+        You enroll in this courses:
+            {% for course in courses %}
+                <p>
+                    <a href="{% url 'student_course_detail' course.id%}">{{ course.title }}</a>
+                    <p>
+                        descpition of course: {{ course.description }}
+                    </p>
+                </p>
+            {% endfor %}
+        Edit your profile details:
+        <p>
+            <a href="{% url 'edit' %}">Edit</a>
+        </p>
+    {% endif %}
+
+    {% if perm %}
+    <p>
+        You can create course:
+        <a href="{% url 'course_create' %}" class="button">Create course!</a>
+    </p>
+    {% if owner_courses %}
+        {% for o_c in owner_courses %}
+            <p>{{ o_c.title }}
+                <a href="{% url 'mine_course_change' o_c.slug %}" class="button">Update this course</a>
+            </p>
+        {% endfor %}
+    {% endif %}
+    {% endif %}
+{% else %}
+    <p>Username: {{ object.user.username }}</p>
+    {% if object.course.title  %}
+        <p>User enrolled this courses: {{ object.course.title }}</p>
+    {% else %}
+        <p>User don't have any enrolled courses</p>
+    {% endif %}
+    <a href="{% url 'chat:user_chat_room' object.slug %}">Chat with this user</a>
+{% endif %}
+
+{% endblock %}

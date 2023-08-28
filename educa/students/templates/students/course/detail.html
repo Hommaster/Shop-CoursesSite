@@ -1,8 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
 
-{% block title %}{{ object.title }}{% endblock %}
+{% block title %}{{ object.title }} {{ perm }}{% endblock %}
 
 {% block content %}
+    {{ perm }}
+    {% if perm %}
+        pp
+    {% endif %}
     <h1>
         {{ module.title }}
     </h1>
@@ -18,13 +22,16 @@
                         <br>
                         {{ m.title }}
                     </a>
+                    <a href="{% url 'chat:module_chat_room' m.id %}">
+                        Module chat room
+                    </a>
                 </li>
             {% empty %}
                 <li>No modules yet.</li>
             {% endfor %}
         </ul>
         <h3>
-            <a href="#" object.id>
+            <a href="{% url 'chat:course_chat_room' object.id%}">
                 Course chat room
             </a>
         </h3>

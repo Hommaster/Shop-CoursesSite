@@ -1,13 +1,19 @@
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.db.models import Count
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import DetailView
 
 from .forms import RegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
 
+from courses.models import Course
 
-def registrate(request,):
+
+def registrate(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         user_form = RegistrationForm(request.POST)
         if user_form.is_valid():
@@ -15,9 +21,15 @@ def registrate(request,):
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
             Profile.objects.create(user=new_user)
+            login(request, new_user, backend='django.contrib.auth.backends.ModelBackend')
             return render(request,
                           'account/registrate_done.html',
                           {'new_user': new_user})
+        else:
+            return render(request,
+                          'account/registrate.html',
+                          {'user_form': user_form}
+                          )
     else:
         user_form = RegistrationForm()
         return render(request,
@@ -49,10 +61,25 @@ def edit(request):
                   })
 
 
-# class ProfileView(DetailView):
-#     model = Profile
-#     template_name = 'account/profile.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         return context
+class ProfileView(DetailView):
+    model = Profile
+    template_name = 'account/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        courses = Course.objects.filter(students=self.request.user)
+        try:
+            owner_courses = Course.objects.filter(owner=self.request.user)
+            context['owner_courses'] = owner_courses
+        except:
+            context['owner_courses'] = None
+        context['courses'] = courses
+        count = Profile.objects.annotate(
+            total_courses=Count('course')
+        )
+        context['count_course'] = count
+        if self.request.user.has_perm('courses.add_course'):
+            context['perm'] = True
+        else:
+            context['perm'] = False
+        return context

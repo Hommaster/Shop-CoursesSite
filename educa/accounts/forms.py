@@ -24,6 +24,12 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError('Этот адрес электронной почты уже занят!')
         return data
 
+    def clean_username(self):
+        cd = self.cleaned_data['username']
+        if User.objects.filter(username=cd).exists():
+            raise forms.ValidationError('Данный username уже занят!')
+        return cd
+
 
 class UserEditForm(forms.ModelForm):
 

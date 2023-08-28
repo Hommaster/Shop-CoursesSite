@@ -20,6 +20,9 @@ class Subject(models.Model):
 
 
 class Course(models.Model):
+    class Status(models.TextChoices):
+        FREE = 'F', 'Free'
+        PAY = 'P', 'Pay'
     title = models.CharField(max_length=250)
     slug = models.CharField(max_length=250, unique=True)
     subject = models.ForeignKey(Subject,
@@ -35,6 +38,10 @@ class Course(models.Model):
     students = models.ManyToManyField(User,
                                       related_name='courses_joined',
                                       blank=True)
+
+    status = models.CharField(max_length=1,
+                              choices=Status.choices,
+                              default=Status.FREE)
 
     def __str__(self):
         return self.title

@@ -5,31 +5,53 @@
 {% endblock %}
 
 {% block content %}
-  {% with subject=object.subject %}
-    <h1>
-      {{ object.title }}
-    </h1>
-    <div class="module">
-      <h2>Overview</h2>
-      <p>
-        <a href="{% url "course_list_subject" subject.slug %}">
-        {{ subject.title }}</a>.
-        {{ object.modules.count }} modules.
-        Instructor: {{ object.owner.get_full_name }}
-      </p>
-      {{ object.overview|linebreaks }}
-      {% if request.user.is_authenticated %}
-        {% if enroll %}
-          <form action="{% url "student_enroll_course" %}" method="post">
-            {{ enroll_form }}
-            {% csrf_token %}
-            <input type="submit" value="Enroll now">
-          </form>
-        {% else %}
-          <a href="{% url 'student_course_detail' course.id %}" class="button">
-            This course is enrolled
-          </a>
-        {% endif %}
+{% if reg == True %}
+
+  {% if owner %}
+      {% with subject=object.subject %}
+      <h1>
+        {{ object.title }}
+      </h1>
+      <div class="module">
+        <h2>Overview</h2>
+        <p>
+          <a href="{% url 'course_list_subject' subject.slug %}">
+          {{ subject.title }}</a>.
+          {{ object.modules.count }} modules.
+          {{ object.students.count }} students.
+          {% if pay_course %}
+          price: {{ pay_course.price }}
+          {% endif %}
+        </p>
+        {% endwith %}
+  {% else %}
+    {% with subject=object.subject %}
+      <h1>
+        {{ object.title }}
+      </h1>
+      <div class="module">
+        <h2>Overview</h2>
+        <p>
+          <a href="{% url "course_list_subject" subject.slug %}">
+          {{ subject.title }}</a>.
+          {{ object.modules.count }} modules.
+          {{ object.students.count }} students.
+          Instructor: {{ object.owner.get_full_name }}
+        </p>
+        {{ object.overview|linebreaks }}
+        {% if request.user.is_authenticated %}
+        {{ profile }}
+          {% if enroll %}
+            <form action="{% url "student_enroll_course" %}" method="post">
+              {{ enroll_form }}
+              {% csrf_token %}
+              <input type="submit" value="Enroll now">
+            </form>
+          {% else %}
+            <a href="{% url 'student_course_detail' course.id %}" class="button">
+              This course is enrolled
+            </a>
+          {% endif %}
       {% else %}
         <a href="{% url "registrate" %}" class="button">
           Register to enroll
@@ -37,4 +59,13 @@
       {% endif %}
     </div>
   {% endwith %}
+        {% endif %}
+{% else %}
+<p>
+    If you have account: <a href="{% url 'login' %}" class="button">Login</a>
+</p>
+<p>
+    If you don't have an account: <a href="{% url 'registrate' %}" class="button">Register</a>
+</p>
+{% endif %}
 {% endblock %}

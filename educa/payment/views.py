@@ -31,6 +31,7 @@ def payment_process(request):
         session_data = {
             'mode': 'payment',
             'client_reference_id': profile_id,
+            'course_reference_id': course_id,
             'success_url': success_url,
             'cancel_url': cancel_url,
             'line_items': []

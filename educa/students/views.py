@@ -7,6 +7,8 @@ from django.views.generic import ListView, DetailView, CreateView, FormView
 
 from courses.models import Course
 from accounts.models import Profile
+from pay.models import PayCourse
+from payment.models import Payment
 
 from .forms import EnrollStudentForm
 
@@ -66,14 +68,27 @@ class StudentEnrollView(LoginRequiredMixin, FormView):
     course = None
     user = None
     profile = None
+    pay_course = None
 
     def form_valid(self, form):
         self.course = form.cleaned_data['course']
-        self.course.students.add(self.request.user)
-        self.user = form.cleaned_data['user']
-        self.profile = Profile.objects.get(user=self.user)
-        self.profile.course.add(self.course)
-        return super().form_valid(form)
+        if self.course.Status.FREE:
+            self.course.students.add(self.request.user)
+            self.user = form.cleaned_data['user']
+            self.profile = Profile.objects.get(user=self.user)
+            self.profile.course.add(self.course)
+            return super().form_valid(form)
+        else:
+            self.profile = Profile.objects.get(user=self.user)
+            self.request.session['profile_id'] = self.profile.id
+            self.request.session['course_id'] = self.course.id
+            self.pay_course = PayCourse.objects.get(course=self.course)
+            Payment.objects.create(
+                course=self.course,
+                profile=self.profile,
+                price=self.pay_course.price
+            )
+            return redirect('payment_process', self.course.slug)
 
     def get_success_url(self):
         return reverse_lazy('student_course_detail',

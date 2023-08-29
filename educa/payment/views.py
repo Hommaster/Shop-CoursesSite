@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.conf import settings
 
 from .models import Payment
 
@@ -7,6 +8,9 @@ from courses.models import Course
 from django.urls import reverse
 
 import stripe as stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+stripe.api_version = settings.STRIPE_API_VERSION
 
 
 def payment_process(request):
@@ -31,6 +35,7 @@ def payment_process(request):
         session_data = {
             'mode': 'payment',
             'client_reference_id': profile_id,
+            'course_reference_id': course_id,
             'success_url': success_url,
             'cancel_url': cancel_url,
             'line_items': []

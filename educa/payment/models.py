@@ -9,7 +9,8 @@ class Payment(models.Model):
                                related_name='course_payment'),
     profile = models.ForeignKey(Profile, on_delete=models.DO_NOTHING,
                                 related_name='profile_payment'),
-    price = models.DecimalField()
+    price = models.DecimalField(decimal_places=2,
+                                max_digits=10)
 
     paid = models.BooleanField(default=False)
 

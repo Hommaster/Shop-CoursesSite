@@ -312,30 +312,29 @@ class CourseDetailView(DetailView):
         try:
             Profile.objects.get(user=self.request.user)
             context['reg'] = True
-            if self.course.owner == self.request.user:
+            if self.course.owner.username == self.request.user.username:
                 context['owner'] = True
-            if self.course.Status.PAY:
+            if self.course.status is 'P':
                 context['pay_course'] = get_object_or_404(PayCourse,
                                                           course=self.course)
             else:
                 context['pay_course'] = None
-                try:
-                    Profile.objects.filter(course=self.object).get(user=self.request.user)
-                    context['profile_have_this_course'] = True
-                except Profile.DoesNotExist:
-                    context['profile_have_this_course'] = False
-                    self.trying = False
-                if self.course.Status.FREE:
-                    if self.trying is False:
-                        context['enroll_form'] = EnrollStudentForm(
-                            initial={
-                                'course': self.object,
-                                'user': self.user
-                            }
-                        )
-                        context['enroll'] = True
-                    else:
-                        context['enroll'] = False
+            try:
+                Profile.objects.filter(course=self.object).get(user=self.request.user)
+                context['profile_have_this_course'] = True
+            except Profile.DoesNotExist:
+                 context['profile_have_this_course'] = False
+                 self.trying = False
+            if self.trying is False:
+                context['enroll_form'] = EnrollStudentForm(
+                    initial={
+                        'course': self.object,
+                        'user': self.user
+                    }
+                )
+                context['enroll'] = True
+            else:
+                context['enroll'] = False
         except TypeError:
             context['reg'] = False
 

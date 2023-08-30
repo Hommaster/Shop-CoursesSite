@@ -37,10 +37,12 @@
           {{ object.modules.count }} modules.
           {{ object.students.count }} students.
           Instructor: {{ object.owner.get_full_name }}
+
         </p>
         {{ object.overview|linebreaks }}
         {% if request.user.is_authenticated %}
         {{ profile }}
+        price: {{ pay_course.price }}
           {% if enroll %}
             <form action="{% url "student_enroll_course" %}" method="post">
               {{ enroll_form }}

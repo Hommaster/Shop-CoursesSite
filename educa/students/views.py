@@ -48,21 +48,6 @@ class StudentCourseDetailView(LoginRequiredMixin,
         return context
 
 
-class StudentRegistration(CreateView):
-    form_class = UserCreationForm
-    template_name = 'students/student/registration.html'
-
-    def form_valid(self, form):
-        resul = self.form_valid(form)
-        cd = form.cleaned_data
-        user = authenticate(
-            username=cd['username'],
-            password=cd['password1']
-        )
-        login(self.request, user)
-        return resul
-
-
 class StudentEnrollView(LoginRequiredMixin, FormView):
     form_class = EnrollStudentForm
     course = None
@@ -72,23 +57,25 @@ class StudentEnrollView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         self.course = form.cleaned_data['course']
-        if self.course.Status.FREE:
+        if self.course.status is 'F':
             self.course.students.add(self.request.user)
             self.user = form.cleaned_data['user']
             self.profile = Profile.objects.get(user=self.user)
             self.profile.course.add(self.course)
             return super().form_valid(form)
         else:
+            self.user = form.cleaned_data['user']
             self.profile = Profile.objects.get(user=self.user)
             self.request.session['profile_id'] = self.profile.id
             self.request.session['course_id'] = self.course.id
             self.pay_course = PayCourse.objects.get(course=self.course)
-            Payment.objects.create(
-                course=self.course,
-                profile=self.profile,
-                price=self.pay_course.price
-            )
-            return redirect('payment_process', self.course.slug)
+            payment = Payment()
+            payment.course_payment = self.course
+            payment.profile_payment = self.profile
+            payment.price = self.pay_course.price
+            payment.save()
+            self.request.session['payment_id'] = payment.id
+            return redirect('payment:process')
 
     def get_success_url(self):
         return reverse_lazy('student_course_detail',

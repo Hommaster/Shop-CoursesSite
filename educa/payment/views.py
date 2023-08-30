@@ -16,6 +16,7 @@ stripe.api_version = settings.STRIPE_API_VERSION
 def payment_process(request):
     profile_id = request.session.get('profile_id')
     course_id = request.session.get('course_id')
+    payment_id = request.session.get('payment_id')
     profile = get_object_or_404(
         Profile,
         id=profile_id
@@ -26,8 +27,7 @@ def payment_process(request):
     )
     pay_course = get_object_or_404(
         Payment,
-        course=course,
-        profile=profile
+        id=payment_id,
     )
     if request.method == 'POST':
         success_url = request.build_success_uri(reverse('payment:completed'))

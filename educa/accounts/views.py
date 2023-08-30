@@ -22,9 +22,7 @@ def registrate(request):
             new_user.save()
             Profile.objects.create(user=new_user)
             login(request, new_user, backend='django.contrib.auth.backends.ModelBackend')
-            return render(request,
-                          'account/registrate_done.html',
-                          {'new_user': new_user})
+            return redirect('home')
         else:
             return render(request,
                           'account/registrate.html',

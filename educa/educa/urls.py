@@ -18,6 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from payment import webhooks
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +31,11 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('pay/', include('pay.urls')),
     path('payment/', include('payment.urls', namespace='payment')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+urlpatterns += [
+    path('payment/webhook/', webhooks.stripe_webhook,
+         name='stripe-webhook'),
+]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

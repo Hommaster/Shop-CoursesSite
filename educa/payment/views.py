@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 
-from .models import Payment
+from .models import PaymentCourses
 
 from accounts.models import Profile
 from courses.models import Course
@@ -14,39 +14,28 @@ stripe.api_version = settings.STRIPE_API_VERSION
 
 
 def payment_process(request):
-    profile_id = request.session.get('profile_id')
-    course_id = request.session.get('course_id')
     payment_id = request.session.get('payment_id')
-    profile = get_object_or_404(
-        Profile,
-        id=profile_id
-    )
-    course = get_object_or_404(
-        Course,
-        id=course_id
-    )
-    pay_course = get_object_or_404(
-        Payment,
+    payment = get_object_or_404(
+        PaymentCourses,
         id=payment_id,
     )
     if request.method == 'POST':
-        success_url = request.build_success_uri(reverse('payment:completed'))
-        cancel_url = request.build_cancel_uri(reverse('payment:canceled'))
+        success_url = request.build_absolute_uri(reverse('payment:completed'))
+        cancel_url = request.build_absolute_uri(reverse('payment:canceled'))
         session_data = {
             'mode': 'payment',
-            'client_reference_id': profile_id,
-            'course_reference_id': course_id,
+            'client_reference_id': payment_id,
             'success_url': success_url,
             'cancel_url': cancel_url,
-            'line_items': []
+            'line_items': [],
         }
         session_data['line_items'].append(
             {
                 'price_data': {
-                    'unit_amount': int(pay_course.price),
+                    'unit_amount': int(payment.price),
                     'currency': 'usd',
                     'product_data': {
-                        'name': course.title
+                        'name': payment.coursep.title
                     },
                 },
                 'quantity': 1,

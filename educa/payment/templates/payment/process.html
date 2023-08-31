@@ -18,9 +18,7 @@
                     <td>{{ course.title }}</td>
                     <td class="num">{{ pay_course.price }} BLR</td>
                     <td class="num">{{ course.owner.get_full_name }}</td>
-                    {% for module in course.modules %}
-                    <td>{{ module.title }}</td>
-                    {% endfor %}
+                    <td>{{ course.modules }}</td>
                 </tr>
         </tbody>
     </table>

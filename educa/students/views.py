@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, FormView
 from courses.models import Course
 from accounts.models import Profile
 from pay.models import PayCourse
-from payment.models import Payment
+from payment.models import PaymentCourses
 
 from .forms import EnrollStudentForm
 
@@ -66,13 +66,10 @@ class StudentEnrollView(LoginRequiredMixin, FormView):
         else:
             self.user = form.cleaned_data['user']
             self.profile = Profile.objects.get(user=self.user)
-            self.request.session['profile_id'] = self.profile.id
-            self.request.session['course_id'] = self.course.id
             self.pay_course = PayCourse.objects.get(course=self.course)
-            payment = Payment()
-            payment.course_payment = self.course
-            payment.profile_payment = self.profile
-            payment.price = self.pay_course.price
+            payment = PaymentCourses.objects.create(coursep=self.course,
+                                                    profilep=self.profile,
+                                                    price=self.pay_course.price)
             payment.save()
             self.request.session['payment_id'] = payment.id
             return redirect('payment:process')

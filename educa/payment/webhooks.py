@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from accounts.models import Profile
 from courses.models import Course
 
-from .models import Payment
+from .models import PaymentCourses
 from .tasks import payment_completed
 
 
@@ -33,19 +33,23 @@ def stripe_webhook(request):
         session = event.data.object
         if session.mode == 'payment' and session.payment_status == 'paid':
             try:
-                profile = Profile.objects.get(id=session.client_reference_id)
-                course = Course.objects.get(id=session.course_reference_id)
+                payment_course = PaymentCourses.objects.get(id=session.client_reference_id)
+                course = get_object_or_404(
+                    Course,
+                    id=payment_course.coursep.id
+                )
+                profile = get_object_or_404(
+                    Profile,
+                    id=payment_course.profilep.id
+                )
             except Profile.DoesNotExist or Course.DoesNotExist:
                 return HttpResponse(status=400)
-            payment = get_object_or_404(
-                Payment,
-                profile=profile,
-                course=course
-            )
-            profile.course = course
+            profile.course.add(course)
             profile.save()
-            payment.paid = True
-            payment.save()
+            payment_course.paid = True
+            payment_course.save()
+            course.students.add(profile.user)
+            course.save()
             payment_completed.delay(course.id, profile.id)
 
     return HttpResponse(status=200)

@@ -9,7 +9,7 @@ def test_user_profile_create():
     user = User.objects.create(
         username='User',
         email='user@mail.ru',
-        password='31012002sesiD'
+        password='password'
     )
     Profile.objects.create(user=user)
     assert Profile.objects.count() == 1

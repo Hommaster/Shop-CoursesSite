@@ -65,19 +65,23 @@ class ProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        courses = Course.objects.filter(students=self.request.user)
-        try:
-            owner_courses = Course.objects.filter(owner=self.request.user)
-            context['owner_courses'] = owner_courses
-        except:
-            context['owner_courses'] = None
-        context['courses'] = courses
-        count = Profile.objects.annotate(
-            total_courses=Count('course')
-        )
-        context['count_course'] = count
-        if self.request.user.has_perm('courses.add_course'):
-            context['perm'] = True
+        if self.request.user.is_authenticated:
+            courses = Course.objects.filter(students=self.request.user)
+            try:
+                owner_courses = Course.objects.filter(owner=self.request.user)
+                context['owner_courses'] = owner_courses
+            except:
+                context['owner_courses'] = None
+            context['courses'] = courses
+            count = Profile.objects.annotate(
+                total_courses=Count('course')
+            )
+            context['count_course'] = count
+            if self.request.user.has_perm('courses.add_course'):
+                context['perm'] = True
+            else:
+                context['perm'] = False
+            return context
         else:
-            context['perm'] = False
-        return context
+            context['not_authenticated'] = True
+            return context

@@ -80,7 +80,7 @@ class Content(models.Model):
                                      on_delete=models.CASCADE,
                                      limit_choices_to={
                                          'model__in': (
-                                             'text',
+                                             'tests',
                                              'image',
                                              'video',
                                              'file'

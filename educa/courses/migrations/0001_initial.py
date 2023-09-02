@@ -123,7 +123,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('object_id', models.PositiveIntegerField()),
                 ('order', courses.orders.OrderItem(blank=True)),
-                ('content_type', models.ForeignKey(limit_choices_to={'model__in': ('text', 'image', 'video', 'file')}, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
+                ('content_type', models.ForeignKey(limit_choices_to={'model__in': ('tests', 'image', 'video', 'file')}, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
                 ('module', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contents', to='courses.module')),
             ],
             options={

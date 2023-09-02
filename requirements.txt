@@ -5,11 +5,13 @@ channels=4.0.0
 django-braces=1.15.0
 channels-redis=4.1.0
 django-redis=5.3.0
-redis=5.1.0
-
+redis=5.0.0
+pytest=7.4.0
 channels~=4.0.0
 Twisted~=22.10.0
 env~=0.1.0
 django-braces~=1.15.0
 celery~=5.3.1
 stripe~=6.1.0
+social-auth-app-django=5.3.0
+daphne=4.0.0

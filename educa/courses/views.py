@@ -80,10 +80,10 @@ class MineCourseUpdateView(TemplateResponseMixin, View):
             return super().dispatch(request, slug)
         except TypeError:
             self.course = None
-            return self.course
+            return redirect('home')
         except Course.DoesNotExist:
             self.course = None
-            return self.course
+            return redirect('home')
 
     def get(self, request, slug):
         if self.course:
@@ -314,7 +314,7 @@ class CourseDetailView(DetailView):
             context['reg'] = True
             if self.course.owner.username == self.request.user.username:
                 context['owner'] = True
-            if self.course.status is 'P':
+            if self.course.status == 'P':
                 context['pay_course'] = get_object_or_404(PayCourse,
                                                           course=self.course)
             else:

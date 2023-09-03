@@ -47,7 +47,7 @@ def test_create_subject(client, user):
 def subject(client, user):
     client.force_login(user['admin_user'])
     Subject.objects.create(title='Python', slug='python')
-    subject = Subject.objects.create(title='Python')
+    subject = Subject.objects.get(title='Python')
     return subject
 
 
@@ -109,3 +109,38 @@ def test_mine_course_change_not_auth_user(client, course):
     response = client.get(url)
     """ reverse to 'login' """
     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_course_detail(client, course, subject):
+    url = reverse('course_detail', kwargs={'slug': course.slug})
+    Subject.objects.get()
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_course_list(client):
+    url = reverse('course_list')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_create_module(client, course):
+    Module.objects.create(course=course, title='Module 1', description='Module')
+    assert Module.objects.count() == 1
+
+
+@pytest.fixture
+def module(course):
+    Module.objects.create(course=course, title='Module 1', description='Module')
+    module = Module.objects.get(course=course)
+    return module
+
+
+@pytest.mark.django_db
+def test_course_module_update(client, user, course):
+    url = reverse('course_module_update', kwargs={'pk': course.id})
+    response = client.get(url)
+    assert response.status_code == 200

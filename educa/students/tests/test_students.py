@@ -2,8 +2,6 @@ import pytest
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from ..models import PayCourse
-
 from accounts.models import Profile
 from courses.models import Course, Subject
 
@@ -42,13 +40,15 @@ def course(user, subject):
 
 
 @pytest.mark.django_db
-def test_create_paycourse(client, course):
-    PayCourse.objects.create(course=course, price=200)
-    assert PayCourse.objects.count() == 1
+def test_student_course_list_url(client, user):
+    url = reverse('student_course_list')
+    client.force_login(user['admin_user'])
+    response = client.get(url)
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_forwarding_pay_course_url(client, course):
-    url = reverse('forwarding_pay_course', kwargs={'course_slug': course.slug})
+def test_student_course_detail_url(client, course):
+    url = reverse('student_course_detail', kwargs={'pk': course.id})
     response = client.get(url)
     assert response.status_code == 200

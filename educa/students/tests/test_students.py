@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from accounts.models import Profile
+from courses.models import Course, Subject
 
 
 @pytest.fixture
@@ -18,9 +19,36 @@ def user():
     return user_profile
 
 
+@pytest.fixture
+def subject(client, user):
+    client.force_login(user['admin_user'])
+    Subject.objects.create(title='Python', slug='python')
+    subject = Subject.objects.get(title='Python')
+    return subject
+
+
+@pytest.fixture
+def course(user, subject):
+    course = Course.objects.create(
+        owner=user['admin_user'],
+        title='Course 1',
+        slug='course_1',
+        subject=subject,
+        description='test description',
+    )
+    return course
+
+
 @pytest.mark.django_db
 def test_student_course_list_url(client, user):
     url = reverse('student_course_list')
     client.force_login(user['admin_user'])
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_student_course_detail_url(client, course):
+    url = reverse('student_course_detail', kwargs={'pk': course.id})
     response = client.get(url)
     assert response.status_code == 200

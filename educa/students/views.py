@@ -57,7 +57,7 @@ class StudentEnrollView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         self.course = form.cleaned_data['course']
-        if self.course.status is 'F':
+        if self.course.status == 'F':
             self.course.students.add(self.request.user)
             self.user = form.cleaned_data['user']
             self.profile = Profile.objects.get(user=self.user)

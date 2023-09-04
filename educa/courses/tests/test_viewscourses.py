@@ -2,7 +2,7 @@ import pytest
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from ..models import Course, Subject, Module, Content
+from ..models import Course, Subject, Module
 
 from accounts.models import Profile
 

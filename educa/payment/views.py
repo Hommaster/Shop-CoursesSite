@@ -3,8 +3,7 @@ from django.conf import settings
 
 from .models import PaymentCourses
 
-from accounts.models import Profile
-from courses.models import Course
+from courses.models import Module
 from django.urls import reverse
 
 import stripe as stripe
@@ -19,6 +18,7 @@ def payment_process(request):
         PaymentCourses,
         id=payment_id,
     )
+    modules = Module.objects.filter(course=payment.coursep)
     if request.method == 'POST':
         success_url = request.build_absolute_uri(reverse('payment:completed'))
         cancel_url = request.build_absolute_uri(reverse('payment:canceled'))

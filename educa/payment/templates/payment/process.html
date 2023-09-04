@@ -15,10 +15,12 @@
         </thead>
         <tbody>
                 <tr class="row {% cycle '1' '2' %}">
-                    <td>{{ course.title }}</td>
-                    <td class="num">{{ pay_course.price }} BLR</td>
-                    <td class="num">{{ course.owner.get_full_name }}</td>
-                    <td>{{ course.modules }}</td>
+                    <td>{{ payment.coursep.title }}</td>
+                    <td class="num">{{ payment.price }} BLR</td>
+                    <td class="num">{{ payment.coursep.owner.get_full_name }}</td>
+                    {% for module in modules %}
+                    <td>{{ module.title }}</td>
+                    {% endfor %}
                 </tr>
         </tbody>
     </table>

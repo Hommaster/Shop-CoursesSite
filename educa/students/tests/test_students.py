@@ -2,8 +2,10 @@ import pytest
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+from ..forms import EnrollStudentForm
+
 from accounts.models import Profile
-from courses.models import Course, Subject
+from courses.models import Course, Subject, Module
 
 
 @pytest.fixture
@@ -39,6 +41,12 @@ def course(user, subject):
     return course
 
 
+@pytest.fixture
+def module(course):
+    Module.objects.create(course=course, title='Module 1', description='Module')
+    module = Module.objects.get(course=course)
+    return module
+
 @pytest.mark.django_db
 def test_student_course_list_url(client, user):
     url = reverse('student_course_list')
@@ -50,5 +58,12 @@ def test_student_course_list_url(client, user):
 @pytest.mark.django_db
 def test_student_course_detail_url(client, course):
     url = reverse('student_course_detail', kwargs={'pk': course.id})
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_student_course_detail_module_url(course, module, client):
+    url = reverse('student_course_detail_module', kwargs={'pk': course.id, 'module_id': module.id})
     response = client.get(url)
     assert response.status_code == 200

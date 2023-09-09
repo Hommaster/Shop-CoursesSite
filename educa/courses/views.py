@@ -1,3 +1,5 @@
+import redis
+from django.conf import settings
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count
@@ -17,6 +19,11 @@ from braces.views import CsrfExemptMixin, JSONResponseMixin
 from students.forms import EnrollStudentForm
 from accounts.models import Profile
 from pay.models import PayCourse
+
+
+r = redis.Redis(port=settings.REDIS_PORT,
+                host=settings.REDIS_HOST,
+                db=settings.REDIS_DB)
 
 
 class OwnerMixin:
@@ -312,13 +319,14 @@ class CourseDetailView(DetailView):
         try:
             Profile.objects.get(user=self.request.user)
             context['reg'] = True
+            total_views = r.incr(f'course:{self.course.id}:views')
+            r.zincrby('course_rating', 1, self.course.id)
+            context['total_views'] = total_views
             if self.course.owner.username == self.request.user.username:
                 context['owner'] = True
             if self.course.status == 'P':
                 context['pay_course'] = get_object_or_404(PayCourse,
                                                           course=self.course)
-            else:
-                context['pay_course'] = None
             try:
                 Profile.objects.filter(course=self.object).get(user=self.request.user)
                 context['profile_have_this_course'] = True

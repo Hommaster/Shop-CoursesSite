@@ -2,4 +2,10 @@
 {% block title %}ScS{% endblock %}
 {% block content %}
     <h1>Welcome!!</h1>
+<p>{{ course.title }}</p>
+{% for courses in most_viewed %}
+<P>
+    {{ courses.title }}
+</P>
+{% endfor %}
 {% endblock %}

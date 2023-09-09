@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-khji#7tha_()s8+rm4x1(tcnhkhig=)wga#8jo^q#@v=&h27pu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mysitepi.com', '127.0.0.1']
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'chat',
     'channels',
     'redisboard',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

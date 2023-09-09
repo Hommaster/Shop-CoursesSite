@@ -320,6 +320,7 @@ class CourseDetailView(DetailView):
             Profile.objects.get(user=self.request.user)
             context['reg'] = True
             total_views = r.incr(f'course:{self.course.id}:views')
+            r.zincrby('course_rating', 1, self.course.id)
             context['total_views'] = total_views
             if self.course.owner.username == self.request.user.username:
                 context['owner'] = True

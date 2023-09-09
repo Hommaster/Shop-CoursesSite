@@ -37,6 +37,7 @@
           {{ object.modules.count }} modules.
           {{ object.students.count }} students.
           Instructor: {{ object.owner.get_full_name }}
+          Views: {{ total_views }}
 
         </p>
         {{ object.overview|linebreaks }}

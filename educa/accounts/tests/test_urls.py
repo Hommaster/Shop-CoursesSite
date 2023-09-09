@@ -1,9 +1,7 @@
 import pytest
-from django.contrib.auth.models import User
-
 from django.urls import reverse
 
-from ..models import Profile
+from pytests.test_father import user
 
 
 @pytest.mark.django_db
@@ -19,15 +17,6 @@ def test_edit_url(client):
     response = client.get(url)
     """ reverse to 'login' """
     assert response.status_code == 302
-
-
-@pytest.fixture
-def user():
-    user = User.objects.create(username='user', password='password', email='email@mail.ru')
-    Profile.objects.create(user=user)
-    profile = Profile.objects.get(user=user)
-    user_profile = {'user': user, 'profile': profile}
-    return user_profile
 
 
 @pytest.mark.django_db

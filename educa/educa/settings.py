@@ -44,11 +44,13 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'pay.apps.PayConfig',
     'payment.apps.PaymentConfig',
+    'api.apps.ApiConfig',
     'social_django',
     'chat',
     'channels',
     'redisboard',
     'django_extensions',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -138,6 +140,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ]
+}
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'

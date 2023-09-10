@@ -31,6 +31,7 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('pay/', include('pay.urls')),
     path('payment/', include('payment.urls', namespace='payment')),
+    path('api/', include('api.urls')),
 ]
 
 urlpatterns += [

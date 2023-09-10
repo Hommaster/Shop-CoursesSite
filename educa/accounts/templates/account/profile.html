@@ -36,11 +36,11 @@
             <a href="{% url 'course_create' %}" class="button">Create course!</a>
         </p>
         {% if owner_courses %}
-            {% for o_c in owner_courses %}
-                <p>{{ o_c.title }}
-                    <a href="{% url 'mine_course_change' o_c.slug %}" class="button">Update this course</a>
+
+                <p>
+                    <a href="{% url 'manage_course_list' %}" class="button">Manage courses</a>
                 </p>
-            {% endfor %}
+
         {% endif %}
         {% endif %}
     {% else %}

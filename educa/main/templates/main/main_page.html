@@ -1,11 +1,33 @@
 {% extends "base1.html" %}
 {% block title %}ScS{% endblock %}
 {% block content %}
-    <h1>Welcome!!</h1>
-<p>{{ course.title }}</p>
-{% for courses in most_viewed %}
-<P>
-    {{ courses.title }}
-</P>
-{% endfor %}
+    <h1>Welcome to my site!</h1>
+<h2>
+    Most viewed courses:
+    {% for courses in most_viewed %}
+    <P>
+        <a href="{% url 'course_detail' courses.slug %}">{{ courses.title }}</a>
+    </P>
+    {% endfor %}
+</h2>
+<h2>
+    Courses with a lot of contents:
+    <p>
+    {% for course_with_content in most_content %}
+        <a href="{%url 'course_detail' course.slug %}">{{ course_with_content.title }}</a>
+    {% endfor %}
+</p>
+</h2>
+<h2>
+    Courses with a lot of students:
+    <p>
+    {% for course_with_students in most_enrolled %}
+        <a href="{%url 'course_detail' course.slug %}">{{ course_with_students.title }}</a>
+    {% endfor %}
+</p>
+</h2>
+<h2>
+    Last created course:
+    <p><a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a></p>
+</h2>
 {% endblock %}

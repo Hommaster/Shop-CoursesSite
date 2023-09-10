@@ -1,9 +1,10 @@
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
+import redis
+
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, FormView
+from django.views.generic import ListView, DetailView, FormView
 
 from courses.models import Course
 from accounts.models import Profile
@@ -11,6 +12,13 @@ from pay.models import PayCourse
 from payment.models import PaymentCourses
 
 from .forms import EnrollStudentForm
+
+
+r = redis.Redis(
+    port=settings.REDIS_PORT,
+    host=settings.REDIS_HOST,
+    db=settings.REDIS_DB,
+)
 
 
 class StudentCourseMixin:
@@ -62,6 +70,7 @@ class StudentEnrollView(LoginRequiredMixin, FormView):
             self.user = form.cleaned_data['user']
             self.profile = Profile.objects.get(user=self.user)
             self.profile.course.add(self.course)
+            r.zincrby('course_rating_enroll', 1, self.course.id)
             return super().form_valid(form)
         else:
             self.user = form.cleaned_data['user']

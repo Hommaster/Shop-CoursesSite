@@ -163,6 +163,7 @@ class ModuleCourseUpdateView(TemplateResponseMixin, View):
         formset = self.get_formset(request.POST)
         if formset.is_valid():
             formset.save()
+            r.zincrby('course_module_count', 1, self.course.id)
             return redirect('manage_course_list')
         return self.render_to_response(
             {
@@ -226,6 +227,7 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
             if not id:
                 Content.objects.create(module=self.module,
                                        item=obj)
+            r.zincrby('course_content_rating', 1, self.module.course.id)
             return redirect('module_content_list', self.module.id)
         return self.render_to_response(
             {
@@ -331,8 +333,8 @@ class CourseDetailView(DetailView):
                 Profile.objects.filter(course=self.object).get(user=self.request.user)
                 context['profile_have_this_course'] = True
             except Profile.DoesNotExist:
-                 context['profile_have_this_course'] = False
-                 self.trying = False
+                context['profile_have_this_course'] = False
+                self.trying = False
             if self.trying is False:
                 context['enroll_form'] = EnrollStudentForm(
                     initial={

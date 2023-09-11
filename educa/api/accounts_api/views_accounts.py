@@ -4,10 +4,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers_accounts import ProfileDetailSerializer, RegistrationSerializer
-from .custom_permissions import IsNotAuthenticated
+from .serializers_accounts import ProfileDetailSerializer, RegistrationSerializer, UserEditSerializer, ProfileEditSerializer
 
 from accounts.models import Profile
+
+from ..custom_permissions import IsNotAuthenticated
 
 
 class RegistrateApi(generics.CreateAPIView):
@@ -30,10 +31,11 @@ class RegistrateApi(generics.CreateAPIView):
             return Response(data)
 
 
-# @api_view
-# @permission_classes([IsAuthenticated])
-# def edit(request):
-#     if request.method == 'POST':
+class ProfileEditAPIView(generics.RetrieveUpdateAPIView):
+    lookup_field = 'slug'
+    queryset = Profile.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileEditSerializer
 
 
 class ProfileDetail(generics.RetrieveAPIView):

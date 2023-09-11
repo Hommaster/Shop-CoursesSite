@@ -1,14 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from courses.models import Course
 from accounts.models import Profile
-
-
-class CourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ['id', 'title', 'subject', 'owner', 'description', 'owner', 'students', 'status']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -38,3 +31,27 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+# class UserEditSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email', 'password', 'first_name']
+#
+#     def save(self):
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'email']
+
+
+class ProfileDetailSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = ['user', 'date_of_birth', 'photo', 'course']

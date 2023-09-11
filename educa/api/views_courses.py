@@ -1,7 +1,7 @@
 from rest_framework import generics
 from courses.models import Course
 
-from .serializers import CourseSerializer
+from .serializers_courses import CourseSerializer
 
 
 class CourseView(generics.ListAPIView):

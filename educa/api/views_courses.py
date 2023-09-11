@@ -1,5 +1,5 @@
 from rest_framework import generics
-from courses.modules import Course
+from courses.models import Course
 
 from .serializers import CourseSerializer
 

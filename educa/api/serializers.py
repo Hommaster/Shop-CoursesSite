@@ -8,7 +8,7 @@ from accounts.models import Profile
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['title', 'subject', 'owner', 'description', 'owner', 'students', 'status']
+        fields = ['id', 'title', 'subject', 'owner', 'description', 'owner', 'students', 'status']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -25,16 +25,16 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'first_name', 'password', 'password2']
 
-    def create(self, validated_data):
-        user = super().create(validated_data)
-        if validated_data['password'] != validated_data['password2']:
-            raise serializers.ValidationError('Password not match!')
-        user.set_password(validated_data['password'])
-        data = validated_data['email']
-        if User.objects.filter(email=data).exists():
-            raise serializers.ValidationError('This email already in use!')
-        username = validated_data['username']
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError('This username already in use!')
+    def save(self, *args, **kwargs):
+        user = User.objects.create(
+            username=self.validated_data['username'],
+            email=self.validated_data['email'],
+            first_name=self.validated_data['first_name'],
+        )
+        password = self.validated_data['password']
+        password2 = self.validated_data['password2']
+        if password != password2:
+            raise serializers.ValidationError({password: 'Пароль не совпадает'})
+        user.set_password(password)
         user.save()
         return user

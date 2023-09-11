@@ -32,6 +32,7 @@ urlpatterns = [
     path('pay/', include('pay.urls')),
     path('payment/', include('payment.urls', namespace='payment')),
     path('api/', include('api.urls')),
+    path('api/auth/', include('rest_framework.urls')),
 ]
 
 urlpatterns += [

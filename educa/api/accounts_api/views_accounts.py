@@ -1,12 +1,14 @@
 from django.contrib.auth import login
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers import RegistrationSerializer
-from .custom_permissions import IsNotAuthenticated
+from .serializers_accounts import ProfileDetailSerializer, RegistrationSerializer, UserEditSerializer, ProfileEditSerializer
 
 from accounts.models import Profile
+
+from ..custom_permissions import IsNotAuthenticated
 
 
 class RegistrateApi(generics.CreateAPIView):
@@ -27,3 +29,17 @@ class RegistrateApi(generics.CreateAPIView):
         else:
             data = serializer.errors
             return Response(data)
+
+
+class ProfileEditAPIView(generics.RetrieveUpdateAPIView):
+    lookup_field = 'slug'
+    queryset = Profile.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileEditSerializer
+
+
+class ProfileDetail(generics.RetrieveAPIView):
+    lookup_field = 'slug'
+    queryset = Profile.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileDetailSerializer

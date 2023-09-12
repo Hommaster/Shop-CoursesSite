@@ -37,11 +37,12 @@ class UserEditSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'first_name']
+        fields = ['username', 'email', 'first_name']
+        # read_only_fields = ['username', 'email', 'password']
 
 
 class ProfileEditSerializer(serializers.ModelSerializer):
-    user = UserEditSerializer(read_only=True)
+    user = UserEditSerializer()
 
     class Meta:
         model = Profile
